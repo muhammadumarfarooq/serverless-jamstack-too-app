@@ -1,0 +1,23 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "description": "This is a very interersting todo application.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/muhammadumarfarooq/serverless-jamstack-too-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/muhammadumarfarooq/serverless-jamstack-too-app/issues"
+  },
+  "homepage": "https://github.com/muhammadumarfarooq/serverless-jamstack-too-app#readme",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}
