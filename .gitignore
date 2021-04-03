@@ -1,0 +1,5 @@
+node_modules
+packages/www/.cache
+packages/www/node_modules
+packages/www/public
+packages/www/.idea
