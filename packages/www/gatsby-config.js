@@ -1,5 +1,6 @@
 module.exports = {
   plugins: [
-    'gatsby-plugin-netlify-identity-widget'
+    "gatsby-plugin-material-ui",
+    'gatsby-plugin-netlify-identity-widget',
   ]
 };
