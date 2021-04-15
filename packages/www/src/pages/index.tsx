@@ -8,14 +8,24 @@ const App = () => {
   const [todos, setTodos] = useState(inititalState);
   
   const handleAddTodo = (value: string) => {
-    setTodos([...todos, { text: value, completed: false, id: "1" }]);
+    setTodos([...todos, { text: value, completed: false, id: new Date().toISOString() }]);
   };
-  console.log(todos);
+  
+  const toggleTodo = (currentTodo: todoInterface) => {
+    const updatedTodos = todos.map(todo => {
+      if ( todo.id === currentTodo.id ) {
+        return { ...todo, completed: !todo.completed }
+      }
+      return todo;
+    })
+    setTodos(updatedTodos);
+  }
+  
   return (
     <div className="app">
       <Navbar/>
       <AddTodoForm handleAddTodo={handleAddTodo}/>
-      <TodoList/>
+      <TodoList toggleTodo={toggleTodo} todos={todos}/>
     </div>
   );
 };

@@ -1,22 +1,18 @@
 import * as React from 'react';
 import TodoSingle from "./TodoSingle";
 
+interface TodoListInterface {
+  todos: todoInterface[]
+  toggleTodo: ToggleTodo
+}
 
-const TodoList = (): JSX.Element => {
-  const todo = {
-    text: "Some text",
-    completed: false,
-    id: "abc."
-  }
-  
-  const handleToggleTodo = () => {
-    console.log("handleToggleTodo");
-  }
-  
+const TodoList = ({ todos, toggleTodo }: TodoListInterface): JSX.Element => {
   return (
-    <div className="todo-list">
-      <TodoSingle toggleTodo={handleToggleTodo} todo={todo}/>
-    </div>
+    <ul className="todo-list">
+      {todos.map((todo) => (
+        <TodoSingle key={todo.id} toggleTodo={toggleTodo} todo={todo}/>
+      ))}
+    </ul>
   );
 }
 
