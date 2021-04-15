@@ -11,6 +11,11 @@ const App = () => {
     setTodos([...todos, { text: value, completed: false, id: new Date().toISOString() }]);
   };
   
+  const handleRemoveTodo = (id: string) => {
+    const updatedTodos = todos.filter(todo => todo.id !== id);
+    setTodos(updatedTodos);
+  }
+  
   const toggleTodo = (currentTodo: todoInterface) => {
     const updatedTodos = todos.map(todo => {
       if ( todo.id === currentTodo.id ) {
@@ -25,7 +30,11 @@ const App = () => {
     <div className="app">
       <Navbar/>
       <AddTodoForm handleAddTodo={handleAddTodo}/>
-      <TodoList toggleTodo={toggleTodo} todos={todos}/>
+      <TodoList
+        handleRemoveTodo={handleRemoveTodo}
+        toggleTodo={toggleTodo}
+        todos={todos}
+      />
     </div>
   );
 };
