@@ -2,13 +2,22 @@ const { ApolloServer, gql } = require('apollo-server-lambda');
 
 const typeDefs = gql`
   type Query {
-    todos: [TODO]
+    todos: [Todo]
   }
   
-  type TODO {
+  type Todo {
     id: ID!
     text: String!
     completed: Boolean!
+  }
+  
+  type Id {
+    id: String!
+  }
+  
+  type Mutation {
+    addTodo(text: String!, completed: Boolean!) : Todo
+    removeTodo(id: String!) : Id
   }
 `;
 
@@ -24,6 +33,20 @@ const resolvers = {
       return todos;
     },
   },
+  Mutation: {
+    addTodo: async (_, { text, completed }) => {
+      return {
+        id: new Date().toISOString(),
+        text,
+        completed,
+      };
+    },
+    removeTodo: async (_, { id }) => {
+      return {
+        id
+      };
+    }
+  }
 };
 
 const server = new ApolloServer({

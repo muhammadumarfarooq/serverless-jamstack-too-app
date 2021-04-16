@@ -1,34 +1,75 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from "../components/navbar";
 import AddTodoForm from "../components/AddTodoForm";
 import TodoList from "../components/TodoList";
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import gql from "graphql-tag"
 
 const inititalState: todoInterface[] = [];
 
 const todosQuery = gql`{
   todos{
-  text
-  completed
-  id
+    text
+    completed
+    id
   }
 }`
 
+const addTodoMutation = gql`
+  mutation addTodo($text: String!, $completed: Boolean!){
+     addTodo(text: $text, completed: $completed){
+       text
+       completed
+       id
+    }
+  }
+`;
+
+const removeTodoMutation = gql`
+  mutation removeTodo($id: String!){
+    removeTodo(id: $id){
+      id
+    }
+  }
+`;
+
 const App = () => {
   const { loading, error, data } = useQuery(todosQuery);
-  
-  console.log({ loading, error, data });
+  const [addTodo] = useMutation(addTodoMutation);
+  const [removeTodo] = useMutation(removeTodoMutation);
   
   const [todos, setTodos] = useState(inititalState);
   
-  const handleAddTodo = (value: string) => {
-    setTodos([...todos, { text: value, completed: false, id: new Date().toISOString() }]);
+  useEffect(() => {
+    if ( data )
+      setTodos(data.todos);
+    //  eslint-disable-next-line
+  }, [loading])
+  
+  const handleAddTodo = async (value: string) => {
+    try {
+      const resp = await addTodo({
+        variables: {
+          text: value,
+          completed: false,
+        }
+      });
+      setTodos([...todos, resp.data.addTodo]);
+    } catch (e) {
+      console.log("Something went wrong!");
+    }
   };
   
-  const handleRemoveTodo = (id: string) => {
-    const updatedTodos = todos.filter(todo => todo.id !== id);
-    setTodos(updatedTodos);
+  const handleRemoveTodo = async (id: string) => {
+    try {
+      const resp = await removeTodo({
+        variables: { id }
+      });
+      const updatedTodos = todos.filter(todo => todo.id !== resp.data.removeTodo.id);
+      setTodos(updatedTodos);
+    } catch (e) {
+      console.log("Something went wrong!", e);
+    }
   }
   
   const toggleTodo = (currentTodo: todoInterface) => {
@@ -41,26 +82,18 @@ const App = () => {
     setTodos(updatedTodos);
   }
   
-  const handleConnectWithApollo = () => {
-    console.log("data");
-  }
-  
   
   return (
     <div className="app">
       <Navbar/>
       <AddTodoForm handleAddTodo={handleAddTodo}/>
-      {data ? (
+      {loading ? <p>Loading...</p> : (
         <TodoList
           handleRemoveTodo={handleRemoveTodo}
           toggleTodo={toggleTodo}
-          todos={data.todos}
+          todos={todos}
         />
-      ) : <p>Loading...</p>}
-      
-      <button onClick={handleConnectWithApollo}>
-        Demo text button is here
-      </button>
+      )}
     </div>
   );
 };
