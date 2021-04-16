@@ -23,12 +23,6 @@ const typeDefs = gql`
   }
 `;
 
-const todos = [
-  { id: "1", text: 'Terry Pratchett', completed: false },
-  { id: "2", text: 'Stephen King', completed: true },
-  { id: "3", text: 'JK Rowling', completed: false },
-];
-
 const resolvers = {
   Query: {
     todos: async () => {
@@ -66,8 +60,13 @@ const resolvers = {
       }
     },
     removeTodo: async (_, { id }) => {
+      const result = await client.query(
+        q.Delete(
+          q.Ref(q.Collection('todos'), id)
+        )
+      );
       return {
-        id
+        id: result.ref.id
       };
     }
   }
