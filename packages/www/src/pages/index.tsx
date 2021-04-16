@@ -2,9 +2,24 @@ import React, { useState } from 'react';
 import Navbar from "../components/navbar";
 import AddTodoForm from "../components/AddTodoForm";
 import TodoList from "../components/TodoList";
+import { useQuery } from '@apollo/client';
+import gql from "graphql-tag"
 
 const inititalState: todoInterface[] = [];
+
+const todosQuery = gql`{
+  todos{
+  text
+  completed
+  id
+  }
+}`
+
 const App = () => {
+  const { loading, error, data } = useQuery(todosQuery);
+  
+  console.log({ loading, error, data });
+  
   const [todos, setTodos] = useState(inititalState);
   
   const handleAddTodo = (value: string) => {
@@ -26,15 +41,26 @@ const App = () => {
     setTodos(updatedTodos);
   }
   
+  const handleConnectWithApollo = () => {
+    console.log("data");
+  }
+  
+  
   return (
     <div className="app">
       <Navbar/>
       <AddTodoForm handleAddTodo={handleAddTodo}/>
-      <TodoList
-        handleRemoveTodo={handleRemoveTodo}
-        toggleTodo={toggleTodo}
-        todos={todos}
-      />
+      {data ? (
+        <TodoList
+          handleRemoveTodo={handleRemoveTodo}
+          toggleTodo={toggleTodo}
+          todos={data.todos}
+        />
+      ) : <p>Loading...</p>}
+      
+      <button onClick={handleConnectWithApollo}>
+        Demo text button is here
+      </button>
     </div>
   );
 };
