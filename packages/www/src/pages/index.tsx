@@ -42,6 +42,7 @@ const updateTodoMutation = gql`
 `;
 
 const App = () => {
+  const [value, setValue] = useState("");
   const { loading, data, error } = useQuery(todosQuery);
   const [addTodo] = useMutation(addTodoMutation);
   const [removeTodo] = useMutation(removeTodoMutation);
@@ -62,6 +63,7 @@ const App = () => {
         }
       });
       setTodos([...todos, resp.data.addTodo]);
+      setValue("");
     } catch (e) {
       console.log("Something went wrong!");
     }
@@ -97,7 +99,11 @@ const App = () => {
   return (
     <div className="app">
       <Navbar/>
-      <AddTodoForm handleAddTodo={handleAddTodo}/>
+      <AddTodoForm
+        value={value}
+        setValue={setValue}
+        handleAddTodo={handleAddTodo}
+      />
       {loading ? <p>Loading...</p> : (
         <TodoList
           handleRemoveTodo={handleRemoveTodo}

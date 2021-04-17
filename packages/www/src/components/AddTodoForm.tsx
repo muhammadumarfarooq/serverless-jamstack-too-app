@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { useState } from "react";
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
 interface AddTodoFormProps {
   handleAddTodo: (string) => void
+  value: String
+  setValue: (string) => void
 }
 
-const AddTodoForm = ({ handleAddTodo }: AddTodoFormProps): JSX.Element => {
-  const [value, setValue] = useState("");
+const AddTodoForm = ({ handleAddTodo, value, setValue }: AddTodoFormProps): JSX.Element => {
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     handleAddTodo(value);
