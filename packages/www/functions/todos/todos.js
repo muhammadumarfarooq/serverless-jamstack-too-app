@@ -1,7 +1,10 @@
 const { ApolloServer, gql } = require('apollo-server-lambda');
 const faunadb = require("faunadb");
 const q = faunadb.query;
-const client = new faunadb.Client({ secret: "fnAEG8GNUaACCOs1E7b8WDqDHc5b7atzEQovpmWN" });
+
+require('dotenv').config();
+
+const client = new faunadb.Client({ secret: process.env.FAUNADB_SECRET_KEY });
 const typeDefs = gql`
   type Query {
     todos: [Todo]
