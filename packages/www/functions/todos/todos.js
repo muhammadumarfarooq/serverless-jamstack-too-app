@@ -1,7 +1,7 @@
 const { ApolloServer, gql } = require('apollo-server-lambda');
 const faunadb = require("faunadb");
 const q = faunadb.query;
-const client = new faunadb.Client({ secret: process.env.FAUNADB_SECRET_KEY });
+const client = new faunadb.Client({ secret: "fnAEG8GNUaACCOs1E7b8WDqDHc5b7atzEQovpmWN" });
 const typeDefs = gql`
   type Query {
     todos: [Todo]
@@ -17,9 +17,14 @@ const typeDefs = gql`
     id: String!
   }
   
+  type Completed {
+    completed: Boolean!
+  }
+  
   type Mutation {
     addTodo(text: String!, completed: Boolean!) : Todo
     removeTodo(id: String!) : Id
+    updateTodo(id: String!, completed: Boolean!) : Completed
   }
 `;
 
@@ -34,6 +39,7 @@ const resolvers = {
             return q.Get(x);
           })
         ));
+      
       return result.data.map(todo => {
         return { ...todo.data, id: todo.ref.id };
       });
@@ -65,8 +71,22 @@ const resolvers = {
           q.Ref(q.Collection('todos'), id)
         )
       );
+      console.log(result.ref.id);
       return {
         id: result.ref.id
+      };
+    },
+    updateTodo: async (_, { id, completed }) => {
+      const result = await client.query(
+        q.Update(
+          q.Ref(q.Collection('todos'), id),
+          { data: { completed } },
+        )
+      );
+      
+      console.log(typeof result.data.completed, result.data.completed);
+      return {
+        completed: result.data.completed
       };
     }
   }

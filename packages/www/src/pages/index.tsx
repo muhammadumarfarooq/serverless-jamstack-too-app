@@ -33,13 +33,20 @@ const removeTodoMutation = gql`
   }
 `;
 
+const updateTodoMutation = gql`
+  mutation updateTodo($id: String!, $completed: Boolean!){
+    updateTodo(id: $id, completed: $completed){
+       completed
+    }
+  }
+`;
+
 const App = () => {
-  const { loading, error, data } = useQuery(todosQuery);
+  const { loading, data, error } = useQuery(todosQuery);
   const [addTodo] = useMutation(addTodoMutation);
   const [removeTodo] = useMutation(removeTodoMutation);
-  
+  const [updateTodo] = useMutation(updateTodoMutation);
   const [todos, setTodos] = useState(inititalState);
-  
   useEffect(() => {
     if ( data )
       setTodos(data.todos);
@@ -65,6 +72,7 @@ const App = () => {
       const resp = await removeTodo({
         variables: { id }
       });
+      
       const updatedTodos = todos.filter(todo => todo.id !== resp.data.removeTodo.id);
       setTodos(updatedTodos);
     } catch (e) {
@@ -72,16 +80,19 @@ const App = () => {
     }
   }
   
-  const toggleTodo = (currentTodo: todoInterface) => {
+  const toggleTodo = async (currentTodo: todoInterface) => {
+    const resp = await updateTodo({
+      variables: { id: currentTodo.id, completed: !currentTodo.completed }
+    });
+    
     const updatedTodos = todos.map(todo => {
       if ( todo.id === currentTodo.id ) {
-        return { ...todo, completed: !todo.completed }
+        return { ...todo, completed: resp.data.updateTodo.completed }
       }
       return todo;
     })
     setTodos(updatedTodos);
   }
-  
   
   return (
     <div className="app">
